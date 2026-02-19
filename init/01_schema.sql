@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS datosTemporales (
 );
 
 -- 1. Cargar Regiones
-LOAD DATA INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE region
 FIELDS TERMINATED BY ','
@@ -44,7 +44,7 @@ IGNORE 1 ROWS
 SET nombreRegion = @nombreRegion;
 
 -- 2. Cargar departamentos
-LOAD DATA INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE departamento
 FIELDS TERMINATED BY ','
@@ -58,7 +58,7 @@ SET
     nombreDepartamento = @nomDep;
 
 -- 3. Cargar municipios
-LOAD DATA INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE municipio
 FIELDS TERMINATED BY ','
