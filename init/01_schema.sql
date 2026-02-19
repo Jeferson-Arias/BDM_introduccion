@@ -1,9 +1,11 @@
+-- 0. Creación de la base de datos con sus tablas
 CREATE DATABASE IF NOT EXISTS entidadesTerritorialesColombia;
 USE entidadesTerritorialesColombia;
 
 CREATE TABLE IF NOT EXISTS region (
     idRegion INT PRIMARY KEY AUTO_INCREMENT,
-    nombreRegion VARCHAR(250) NOT NULL
+    nombreRegion VARCHAR(250) NOT NULL,
+    CONSTRAINT UQ_region_nombre UNIQUE (nombreRegion)
 );
 
 CREATE TABLE IF NOT EXISTS departamento (
@@ -30,32 +32,41 @@ CREATE TABLE IF NOT EXISTS datosTemporales (
     nombreMunicipio varchar(250)
 );
 
+-- 1. Cargar Regiones
 LOAD DATA INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
-INTO TABLE datosTemporales
-FIELDS TERMINATED BY ',' 
+IGNORE
+INTO TABLE region
+FIELDS TERMINATED BY ','
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(nombreRegion, codigoDepartamento, nombreDepartamento, codigoMunicipio, nombreMunicipio);
+(@nombreRegion, @codDep, @nomDep, @codMun, @nomMun)
+SET nombreRegion = @nombreRegion;
 
-INSERT INTO region (nombreRegion)
-SELECT DISTINCT nombreRegion
-FROM datosTemporales;
+-- 2. Cargar departamentos
+LOAD DATA INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+IGNORE
+INTO TABLE departamento
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(@nombreRegion, @codDep, @nomDep, @codMun, @nomMun)
+SET
+    idDepartamento   = CAST(@codDep AS UNSIGNED),
+    idRegion         = (SELECT idRegion FROM region WHERE nombreRegion = @nombreRegion),
+    nombreDepartamento = @nomDep;
 
-INSERT INTO departamento (idDepartamento, idRegion, nombreDepartamento)
-SELECT DISTINCT
-    CAST(dt.codigoDepartamento AS UNSIGNED),
-    r.idRegion,
-    dt.nombreDepartamento
-FROM datosTemporales dt
-INNER JOIN region r 
-    ON r.nombreRegion = dt.nombreRegion;
-
-INSERT INTO municipio (idMunicipio, idDepartamento, nombreMunicipio)
-SELECT DISTINCT
-    REPLACE(dt.codigoMunicipio, '.', '-') AS idMunicipio,
-    CAST(SUBSTRING_INDEX(dt.codigoMunicipio, '.', 1) AS UNSIGNED) AS idDepartamento,
-    dt.nombreMunicipio
-FROM datosTemporales dt;
-
-DROP TABLE datosTemporales;
+-- 3. Cargar municipios
+LOAD DATA INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+IGNORE
+INTO TABLE municipio
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(@nombreRegion, @codDep, @nomDep, @codMun, @nomMun)
+SET
+    idMunicipio    = REPLACE(@codMun, '.', '-'),
+    idDepartamento = CAST(SUBSTRING_INDEX(@codMun, '.', 1) AS UNSIGNED),
+    nombreMunicipio = @nomMun;
