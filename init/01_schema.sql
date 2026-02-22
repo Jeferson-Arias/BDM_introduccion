@@ -1,7 +1,8 @@
--- 0. Creación de la base de datos con sus tablas
+-- 0. Creación de la base de datos
 -- CREATE DATABASE IF NOT EXISTS entidadesTerritorialesColombia;
 -- USE entidadesTerritorialesColombia;
 
+-- Creación de tablas
 CREATE TABLE IF NOT EXISTS region (
     idRegion INT PRIMARY KEY AUTO_INCREMENT,
     nombreRegion VARCHAR(250) NOT NULL,
@@ -17,7 +18,7 @@ CREATE TABLE IF NOT EXISTS departamento (
 );
 
 CREATE TABLE IF NOT EXISTS municipio (
-    idMunicipio varchar(20) PRIMARY KEY,
+    idMunicipio VARCHAR(20) PRIMARY KEY,
     idDepartamento INT,
     nombreMunicipio VARCHAR(250) NOT NULL,
     CONSTRAINT fk_municipio_departamento
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS municipio (
 );
 
 -- 1. Cargar Regiones
-LOAD DATA LOCAL INFILE '/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/home/loader/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE region
 FIELDS TERMINATED BY ','
@@ -36,7 +37,7 @@ IGNORE 1 ROWS
 SET nombreRegion = @nombreRegion;
 
 -- 2. Cargar departamentos
-LOAD DATA LOCAL INFILE '/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/home/loader/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE departamento
 FIELDS TERMINATED BY ','
@@ -50,7 +51,7 @@ SET
     nombreDepartamento = @nomDep;
 
 -- 3. Cargar municipios
-LOAD DATA LOCAL INFILE '/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/home/loader/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE municipio
 FIELDS TERMINATED BY ','
