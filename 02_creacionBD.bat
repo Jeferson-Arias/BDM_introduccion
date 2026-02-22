@@ -13,9 +13,16 @@ docker compose up -d
 
 echo.
 echo 3) Esperando a que MariaDB inicie...
-timeout /t 45 /nobreak > nul
+
+:waitMariaDB
+docker exec mariadb_db mariadb -u root -proot123 -e "USE entidadesTerritorialesColombia; SHOW TABLES;" >nul 2>&1
+if errorlevel 1 (
+    timeout /t 3 /nobreak >nul
+    goto waitMariaDB
+)
+
+echo MariaDB lista.
 
 echo.
 echo 4) Entrando a la terminal de MySQL...
 docker exec -it mariadb_db mariadb -u root -proot123 entidadesTerritorialesColombia
-echo docker exec -it mariadb_db mariadb -u root -proot123 -D entidadesTerritorialesColombia -e "SHOW TABLES;"

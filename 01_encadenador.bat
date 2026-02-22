@@ -27,5 +27,14 @@ echo.
 echo VSCode listo.
 
 powershell -command "Start-Sleep 3; $wshell = New-Object -ComObject WScript.Shell; $wshell.AppActivate('Visual Studio Code'); Start-Sleep 1; $wshell.SendKeys('%%t'); Start-Sleep -Milliseconds 400; $wshell.SendKeys('n'); Start-Sleep 2; $wshell.SendKeys('.\02_creacionBD.bat{ENTER}')"
-timeout /t 90 /nobreak > nul
+
+timeout /t 30 /nobreak > nul
+
+:waitMariaDB
+docker exec mariadb_db mariadb -u root -proot123 -e "USE entidadesTerritorialesColombia; SHOW TABLES;" >nul 2>&1
+if errorlevel 1 (
+    timeout /t 3 /nobreak >nul
+    goto waitMariaDB
+)
+
 powershell -command "Start-Sleep 1; $wshell = New-Object -ComObject WScript.Shell; $wshell.AppActivate('Visual Studio Code'); Start-Sleep 1; $wshell.SendKeys('^+5'); Start-Sleep 2; $wshell.SendKeys('.\03_conexionBD.bat{ENTER}')"
