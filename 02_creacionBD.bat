@@ -1,3 +1,5 @@
+@echo off
+
 echo.
 echo 0) Baja todos los contenedores activos...
 docker compose down -v
