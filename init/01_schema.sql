@@ -1,6 +1,6 @@
 -- 0. Creación de la base de datos con sus tablas
-CREATE DATABASE IF NOT EXISTS entidadesTerritorialesColombia;
-USE entidadesTerritorialesColombia;
+-- CREATE DATABASE IF NOT EXISTS entidadesTerritorialesColombia;
+-- USE entidadesTerritorialesColombia;
 
 CREATE TABLE IF NOT EXISTS region (
     idRegion INT PRIMARY KEY AUTO_INCREMENT,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS municipio (
 );
 
 -- 1. Cargar Regiones
-LOAD DATA LOCAL INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE region
 FIELDS TERMINATED BY ','
@@ -36,7 +36,7 @@ IGNORE 1 ROWS
 SET nombreRegion = @nombreRegion;
 
 -- 2. Cargar departamentos
-LOAD DATA LOCAL INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE departamento
 FIELDS TERMINATED BY ','
@@ -45,12 +45,12 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (@nombreRegion, @codDep, @nomDep, @codMun, @nomMun)
 SET
-    idDepartamento   = CAST(@codDep AS UNSIGNED),
-    idRegion         = (SELECT idRegion FROM region WHERE nombreRegion = @nombreRegion),
+    idDepartamento     = CAST(@codDep AS UNSIGNED),
+    idRegion           = (SELECT idRegion FROM region WHERE nombreRegion = @nombreRegion),
     nombreDepartamento = @nomDep;
 
 -- 3. Cargar municipios
-LOAD DATA LOCAL INFILE '/var/lib/mysql-files/Departamentos_y_municipios_de_Colombia_20241031.csv'
+LOAD DATA LOCAL INFILE '/repository/Departamentos_y_municipios_de_Colombia_20241031.csv'
 IGNORE
 INTO TABLE municipio
 FIELDS TERMINATED BY ','
@@ -59,6 +59,6 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (@nombreRegion, @codDep, @nomDep, @codMun, @nomMun)
 SET
-    idMunicipio    = REPLACE(@codMun, '.', '-'),
-    idDepartamento = CAST(SUBSTRING_INDEX(@codMun, '.', 1) AS UNSIGNED),
+    idMunicipio     = REPLACE(@codMun, '.', '-'),
+    idDepartamento  = CAST(SUBSTRING_INDEX(@codMun, '.', 1) AS UNSIGNED),
     nombreMunicipio = @nomMun;
