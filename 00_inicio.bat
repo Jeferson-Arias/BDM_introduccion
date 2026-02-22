@@ -41,8 +41,8 @@ echo Visual Studio Code instalado. Version: !CODE_VER!
 
 rem --- Clonar repositorio si no existe ---
 :clone
-set REPO_URL=https://github.com/Jeferson-Arias/IntroduccionBasesdeDatosMasivas.git
-set REPO_DIR=IntroduccionBasesdeDatosMasivas
+set REPO_URL=https://github.com/Jeferson-Arias/BDM_introduccion.git
+set REPO_DIR=BDM_introduccion
 
 if exist "%CD%\%REPO_DIR%" (
     echo El repositorio ya existe en %CD%\%REPO_DIR%. Se intentara actualizar.
@@ -62,7 +62,7 @@ if exist "%CD%\%REPO_DIR%" (
 )
 
 rem --- Entrar al repositorio y ejecutar el proyecto ---
-cd IntroduccionBasesdeDatosMasivas && 01_encadenador.bat
+cd BDM_introduccion && 01_encadenador.bat
 
 echo Proceso finalizado.
 endlocal
