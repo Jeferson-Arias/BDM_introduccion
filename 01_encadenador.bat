@@ -31,7 +31,7 @@ powershell -command "Start-Sleep 3; $wshell = New-Object -ComObject WScript.Shel
 :waitMariaDB
 docker exec mariadb_db mariadb -u root -proot123 -e "USE entidadesTerritorialesColombia; SHOW TABLES;" >nul 2>&1
 if errorlevel 1 (
-    timeout /t 3 /nobreak >nul
+    timeout /t 10 /nobreak >nul
     goto waitMariaDB
 )
 

@@ -1,14 +1,19 @@
 @echo off
+setlocal enabledelayedexpansion
+
+echo.
+echo 1) Esperando a que MariaDB inicie...
 
 :waitMariaDB
 docker exec mariadb_db mariadb -u root -proot123 -e "USE entidadesTerritorialesColombia; SHOW TABLES;" >nul 2>&1
 if errorlevel 1 (
-    timeout /t 3 /nobreak >nul
+    timeout /t 5 /nobreak >nul
     goto waitMariaDB
 )
+echo MariaDB lista.
 
 echo.
-echo Comprobando extension MySQL Client...
+echo 2) Comprobando extension MySQL Client...
 code --list-extensions | findstr /I "cweijan.vscode-mysql-client2" >nul 2>&1
 if errorlevel 1 (
     echo Instalando extension...
@@ -16,6 +21,12 @@ if errorlevel 1 (
 ) else (
     echo Extension ya instalada.
 )
+
 echo.
-echo La conexion se carga automaticamente desde .vscode/settings.json
+echo 3) Realizando la conexión con la herramienta de VSC...
+
+
+
+echo.
+echo Proceso finalizado.
 endlocal

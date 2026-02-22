@@ -17,7 +17,7 @@ echo 3) Esperando a que MariaDB inicie...
 :waitMariaDB
 docker exec mariadb_db mariadb -u root -proot123 -e "USE entidadesTerritorialesColombia; SHOW TABLES;" >nul 2>&1
 if errorlevel 1 (
-    timeout /t 3 /nobreak >nul
+    timeout /t 5 /nobreak >nul
     goto waitMariaDB
 )
 
